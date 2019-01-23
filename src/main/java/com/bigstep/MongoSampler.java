@@ -12,6 +12,9 @@ import org.reactivestreams.Subscription;
 
 import java.io.Serializable;
 import java.security.MessageDigest;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -106,30 +109,26 @@ public class MongoSampler extends AbstractJavaSamplerClient implements Serializa
             if(testType.equals("read"))
             {
 
-                Subscriber<Document> subscriber = new VerifierSubscriber<Document>();
+                ObservableSubscriber<Document> subscriber = new ObservableSubscriber<Document>();
                 collection.find(eq("key",key)).first().subscribe(subscriber);
-                subscriber.wait(timeout);
 
+                subscriber.await(timeout, TimeUnit.MILLISECONDS);
+                List<Document> docs=subscriber.getReceived();
+                testResult = !docs.isEmpty() && docs.get(0).containsKey("key") && docs.get(0).getString("key").equals(key);
             }
             else
             if(testType.equals("write"))
             {
-                if(value.equals(""))
+                if(!value.equals(""))
                 {
-
-                  //  String nvalue = Normalizer.normalize(value, Normalizer.Form.NFC);
-                  //  DBObject dbObject = (DBObject) JSON.parse(nvalue);
-                  // dbObject.put("myid",(Object)key);
-                  //dbObject.put("hash",md5(key));
-                  //collection.insert(dbObject);
 
                   Document doc = new Document("key", value);
 
-                  Subscriber<Success> subscriber = new OperationSubscriber<Success>();
+                  OperationSubscriber<Success> subscriber = new OperationSubscriber<Success>();
                   collection.insertOne(doc).subscribe(subscriber);
-                  subscriber.wait(timeout);
+                  subscriber.await(timeout, TimeUnit.MILLISECONDS);
 
-                  testResult = true;
+                  testResult = subscriber.isCompleted();
 
                 }
                 else
@@ -144,7 +143,7 @@ public class MongoSampler extends AbstractJavaSamplerClient implements Serializa
             result.setResponseMessage( "OK on object "+key );
             result.setResponseCodeOK(); // 200 code
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
 
             result.sampleEnd(); // stop stopwatch
             result.setSuccessful( false );
@@ -159,58 +158,21 @@ public class MongoSampler extends AbstractJavaSamplerClient implements Serializa
 
             logger.error("runTest: "+e.getClass()+" "+e.getMessage()+" "+stringWriter.toString());
         }
-        finally
-        {
-            if (client != null) {
-                client.close();
-            }
-        }
+
 
         return result;
     }
 
 
-     class VerifierSubscriber<T> implements Subscriber<T> {
+    public static class OperationSubscriber<T> extends ObservableSubscriber<T> {
 
-        private  final Logger logger = Logger.getLogger(MongoSampler.class);
-
-        public void onSubscribe(Subscription subscription) {
-            subscription.request(1);
-        }
-
-         public void onNext(T t) {
-
-         }
-
-         public void onError(Throwable throwable) {
-                logger.error("VerifierSubscriber.onError():"+throwable.getMessage());
-         }
-
-         public void onComplete() {
-
-         }
-
-     }
-
-    class OperationSubscriber<Success> implements Subscriber<Success> {
-
-        private final Logger logger = Logger.getLogger(MongoSampler.class);
-
-        public void onSubscribe(Subscription subscription) {
-            subscription.request(Integer.MAX_VALUE);
-        }
-
-        public void onNext(Success t) {
-
-        }
-
-        public void onError(Throwable throwable) {
-            logger.error("VerifierSubscriber.onError():" + throwable.getMessage());
-        }
-
-        public void onComplete() {
-
+        @Override
+        public void onSubscribe(final Subscription s) {
+            super.onSubscribe(s);
+            s.request(Integer.MAX_VALUE);
         }
     }
+
+
 
 }
