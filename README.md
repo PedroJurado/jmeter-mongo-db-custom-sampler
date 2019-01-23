@@ -7,7 +7,7 @@ To compile simply run:
 mvn package
 ```
 
-###Usage
+### Usage
 This was tested with jmeter 5.0. To use copy the resulting jar (from the target directory) to 
 jmeter's lib/ext directories. 
 
