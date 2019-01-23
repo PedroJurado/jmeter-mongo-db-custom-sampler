@@ -7,14 +7,12 @@ import org.apache.jmeter.protocol.java.sampler.JavaSamplerContext;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.log4j.Logger;
 import org.bson.Document;
-import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -39,7 +37,7 @@ public class MongoSampler extends AbstractJavaSamplerClient implements Serializa
         defaultParameters.addArgument("key", "");
         defaultParameters.addArgument("value", "");
 
-        defaultParameters.addArgument("connectionString", "mongo://localhost");
+        defaultParameters.addArgument("connectionString", "mongodb://localhost");
         defaultParameters.addArgument("database", "mydb");
         defaultParameters.addArgument("collection", "test");
 
