@@ -40,20 +40,7 @@ The testType configuration setting is used to specify the type of test to perfor
 ### Using a CSV dataset
 
 The typical scenario is to use a CSV dataset to load keys into a variable and use that to measure writes and the same var to measure reads on the previously inserted keys.
-To generate the keys one can use the following python script:
-```
-#!/usr/bin/python
-
-import uuid
-import sys
-import random
-import string
-
-if(len(sys.argv)!=2):
-	sys.exit("Syntax: "+sys.argv[0]+" <no_keys>");
-
-no_keys=long(sys.argv[1])
-
-for i in range(no_keys):
-	print str(uuid.uuid4())
+To generate a 1m key-value pairs with pairs of 100 chars and a random UUID key. For very big numbers this might take a while.
+``` 
+python sbin/genkeysandvals.py 1000000 100 > input.csv
 ```
