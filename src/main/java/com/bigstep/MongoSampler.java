@@ -92,7 +92,9 @@ public class MongoSampler extends AbstractJavaSamplerClient implements Serializa
         String testType = context.getParameter( "testType" );
 
         SampleResult result = new SampleResult();
-        result.sampleStart(); // start stopwatch
+
+        boolean successful = false;
+        String message = "";
 
         try {
             if(collection==null)
@@ -102,59 +104,82 @@ public class MongoSampler extends AbstractJavaSamplerClient implements Serializa
             if(null==client)
                 throw new Exception("Mongo Client not initialised");
 
-            boolean testResult = true;
-
             if(testType.equals("read"))
             {
+                result.sampleStart(); // start stopwatch
 
                 ObservableSubscriber<Document> subscriber = new ObservableSubscriber<Document>();
-                collection.find(eq("key",key)).first().subscribe(subscriber);
+                collection.find(eq("_id", key)).first().subscribe(subscriber);
 
                 subscriber.await(timeout, TimeUnit.MILLISECONDS);
+
+                result.sampleEnd(); // stop stopwatch
+
                 List<Document> docs=subscriber.getReceived();
-                testResult = !docs.isEmpty() && docs.get(0).containsKey("key") && docs.get(0).getString("key").equals(key);
+
+                 if(docs.isEmpty())
+                     throw new IndexOutOfBoundsException("no value was returned to read request");
+
+                if(!value.equals("")) {
+                    String retrivedVal = docs.get(0).getString("value");
+
+                    if (!value.equals(retrivedVal))
+                        throw new Exception("Value verification failed. Expected:"+value+" got instead:"+retrivedVal);
+                }
+
             }
             else
             if(testType.equals("write"))
             {
-                if(!value.equals(""))
+                if(value.equals(""))
                 {
-
-                  Document doc = new Document("key", value);
-
-                  OperationSubscriber<Success> subscriber = new OperationSubscriber<Success>();
-                  collection.insertOne(doc).subscribe(subscriber);
-                  subscriber.await(timeout, TimeUnit.MILLISECONDS);
-
-                  testResult = subscriber.isCompleted();
-
+                    logger.error("Null value insert not implemented at test type write");
+                    throw new Exception("please configure a value for insert.");
                 }
                 else
                 {
-                    logger.error("Null value insert not implemented at test type write");
-                    testResult = false;
+                  Document doc = new Document("_id", key).append("value",value);
+
+                  OperationSubscriber<Success> subscriber = new OperationSubscriber<Success>();
+
+                  result.sampleStart(); // start stopwatch
+
+                  collection.insertOne(doc).subscribe(subscriber);
+
+                  subscriber.await(timeout, TimeUnit.MILLISECONDS);
+
+                  result.sampleEnd(); // stop stopwatch
+
+                   if(!subscriber.isCompleted())
+                       throw new Exception("subscriber request was not completed. Timeout?");
+
                 }
             }
-
-            result.sampleEnd(); // stop stopwatch
-            result.setSuccessful( testResult );
-            result.setResponseMessage( "OK on object "+key );
-            result.setResponseCodeOK(); // 200 code
+            successful = true;
+            message = "OK on object "+key;
 
         } catch (Throwable e) {
-
-            result.sampleEnd(); // stop stopwatch
-            result.setSuccessful( false );
-            result.setResponseMessage( "Exception: " + e );
 
             // get stack trace as a String to return as document data
             java.io.StringWriter stringWriter = new java.io.StringWriter();
             e.printStackTrace( new java.io.PrintWriter( stringWriter ) );
-            result.setResponseData( stringWriter.toString() , "utf-8");
-            result.setDataType( org.apache.jmeter.samplers.SampleResult.TEXT );
-            result.setResponseCode( "500" );
+            message = stringWriter.toString();
 
             logger.error("runTest: "+e.getClass()+" "+e.getMessage()+" "+stringWriter.toString());
+        }
+        finally {
+
+
+            result.setResponseMessage(message);
+            result.setResponseData( message , "utf-8");
+            result.setDataType( org.apache.jmeter.samplers.SampleResult.TEXT );
+            result.setSuccessful(successful);
+
+            if(successful)
+                result.setResponseCodeOK(); // 200 code
+            else
+                result.setResponseCode( "500" );
+
         }
 
 
