@@ -1,5 +1,7 @@
 # jmeter-mongo-db-custom-sampler
-Reactive streams based jmeter mongo db custom sampler
+JMeter MongoDB custom sampler (plugin). This can be used to benchmark your MongoDB deployment. It has also been successfully tested with AWS's DocumentDB.
+This version uses ReactiveStreams 1.10 and the 3.9 Java MongoDB Driver. 
+
 
 [![Build Status](https://travis-ci.org/bigstepinc/jmeter-mongo-db-custom-sampler.svg?branch=master)](https://travis-ci.org/bigstepinc/jmeter-mongo-db-custom-sampler)
 
