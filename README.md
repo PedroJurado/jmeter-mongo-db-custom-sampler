@@ -34,9 +34,10 @@ them from a file.
 
 ### Test Types
 The testType configuration setting is used to specify the type of test to perform:
-* "read"  the "key" field will be used to populate the "_id" field of the inserted documents and the value field to populate a "value" field.
-* "write"  the "key" field will be used to retrieve the documents with the specified "_id". The value field is optional and if provided it will be used to test the retrieved value against the provided one. The test will fail if they do not match. This could to test for data corruption.    
-
+* "write"  the "key" field will be used to populate the "_id" field of the inserted documents and the value field to populate a "value" field.
+* "read"  the "key" field will be used to retrieve the documents with the specified "_id". The value field is optional and if provided it will be used to test the retrieved value against the provided one. The test will fail if they do not match. This could to test for data corruption.    
+* "writeMany" the "key" field will be used to populate the "_id" field of the inserted documents like this: $key-$i where $will be between 0 and batchSize. The value field to populate a "value" field.
+* "readMany"  the "key" field will be used to retrieve the documents with the specified "_id" like this: $key-$i where $will be between 0 and batchSize. The value field is optional and if provided it will be used to test the retrieved value against the provided one. The test will fail if they do not match. This could to test for data corruption.
 ### Using a CSV dataset
 
 The typical scenario is to use a CSV dataset to load keys into a variable and use that to measure writes and the same var to measure reads on the previously inserted keys.
