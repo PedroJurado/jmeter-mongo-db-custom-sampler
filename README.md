@@ -33,6 +33,13 @@ them from a file.
 
 ![alt text](img/jmeter.png "jmeter config")
 
+### Input parameters
+The test requires several values to be configured appropriately:
+* testType  - Please see below
+* key, value, batchSize - Please see below at the TestType section
+* connectionString - Connection string in the mongodb://host:port format
+* database - Database to connect to such as "mydb".
+* collection - Collection name such as "test". Needs to exist.
 
 ### Test Types
 The testType configuration setting is used to specify the type of test to perform:
