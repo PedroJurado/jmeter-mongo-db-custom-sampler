@@ -11,10 +11,12 @@ import org.reactivestreams.Subscription;
 
 import java.io.Serializable;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.regex;
 
 
 public class MongoSampler extends AbstractJavaSamplerClient implements Serializable {
@@ -40,6 +42,7 @@ public class MongoSampler extends AbstractJavaSamplerClient implements Serializa
         defaultParameters.addArgument("connectionString", "mongodb://localhost");
         defaultParameters.addArgument("database", "mydb");
         defaultParameters.addArgument("collection", "test");
+        defaultParameters.addArgument("batchSize", "100");
 
         return defaultParameters;
     }
@@ -153,6 +156,74 @@ public class MongoSampler extends AbstractJavaSamplerClient implements Serializa
                    if(!subscriber.isCompleted())
                        throw new Exception("subscriber request was not completed. Timeout?");
 
+                }
+            }
+            else
+            if(testType.equals("writeMany"))
+            {
+                if(value.equals(""))
+                {
+                    logger.error("Null value insert not implemented at test type write");
+                    throw new Exception("please configure a value for insert.");
+                }
+                else
+                {
+                    Long batchSize = context.getLongParameter( "batchSize" );
+
+                    List<Document> documents = new ArrayList<>();
+                    for (int i = 0; i < batchSize; i++) {
+                        documents.add(new Document("_id", key+"-"+i).append("value",value));
+                    }
+                    OperationSubscriber<Success> subscriber = new OperationSubscriber<>();
+
+                    result.sampleStart(); // start stopwatch
+
+                    collection.insertMany(documents).subscribe(subscriber);
+
+                    subscriber.await(timeout, TimeUnit.MILLISECONDS);
+
+                    result.sampleEnd(); // stop stopwatch
+
+                    if(!subscriber.isCompleted())
+                        throw new Exception("subscriber request was not completed. Timeout?");
+                }
+            }
+            else
+            if(testType.equals("readMany"))
+            {
+                if(value.equals(""))
+                {
+                    logger.error("Null value insert not implemented at test type write");
+                    throw new Exception("please configure a value for insert.");
+                }
+                else
+                {
+                    Long batchSize = context.getLongParameter( "batchSize" );
+
+                    result.sampleStart(); // start stopwatch
+
+                    ObservableSubscriber<Document> subscriber = new ObservableSubscriber<Document>();
+
+                    collection.find(regex("_id", "/^"+key+"\\-.*$/")).subscribe(subscriber);
+
+                    subscriber.await(timeout, TimeUnit.MILLISECONDS);
+
+                    result.sampleEnd(); // stop stopwatch
+
+                    List<Document> docs=subscriber.getReceived();
+
+                    if(docs.isEmpty())
+                        throw new IndexOutOfBoundsException("no value was returned to read request");
+
+                    if(docs.size()!=batchSize)
+                        throw new Exception("The number of values returned is not equal to the batchSize, it is "+docs.size()+" expected "+batchSize);
+
+                    if(!value.equals("")) {
+                        String retrievedVal = docs.get(0).getString("value");
+
+                        if (!value.equals(retrievedVal))
+                            throw new Exception("Value verification failed. Expected:"+value+" got instead:"+retrievedVal);
+                    }
                 }
             }
             successful = true;
