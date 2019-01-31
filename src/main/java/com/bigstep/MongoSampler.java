@@ -96,8 +96,8 @@ public class MongoSampler extends AbstractJavaSamplerClient implements Serializa
 
         SampleResult result = new SampleResult();
 
-        boolean successful = false;
-        String message = "";
+        boolean successful = true;
+        String message = "OK";
 
         try {
             if(collection==null)
@@ -120,14 +120,19 @@ public class MongoSampler extends AbstractJavaSamplerClient implements Serializa
 
                 List<Document> docs=subscriber.getReceived();
 
-                 if(docs.isEmpty())
-                     throw new IndexOutOfBoundsException("no value was returned to read request");
+                 if(docs.isEmpty()) {
+                     successful=false;
+                     message = "no value was returned to read request";
+                 }
+                 else
+                 if(!value.equals("")) {
 
-                if(!value.equals("")) {
                     String retrivedVal = docs.get(0).getString("value");
 
-                    if (!value.equals(retrivedVal))
-                        throw new Exception("Value verification failed. Expected:"+value+" got instead:"+retrivedVal);
+                    if (!value.equals(retrivedVal)) {
+                        successful = false;
+                        message = "Value verification failed. Expected:" + value + " got instead:" + retrivedVal;
+                    }
                 }
 
             }
@@ -153,8 +158,10 @@ public class MongoSampler extends AbstractJavaSamplerClient implements Serializa
 
                   result.sampleEnd(); // stop stopwatch
 
-                   if(!subscriber.isCompleted())
-                       throw new Exception("subscriber request was not completed. Timeout?");
+                  if(!subscriber.isCompleted()) {
+                       successful =false;
+                       message=  "subscriber request was not completed. Timeout?";
+                  }
 
                 }
             }
@@ -184,8 +191,10 @@ public class MongoSampler extends AbstractJavaSamplerClient implements Serializa
 
                     result.sampleEnd(); // stop stopwatch
 
-                    if(!subscriber.isCompleted())
-                        throw new Exception("subscriber request was not completed. Timeout?");
+                    if(!subscriber.isCompleted()) {
+                        successful = false;
+                        message ="subscriber request was not completed. Timeout?";
+                    }
                 }
             }
             else
@@ -212,22 +221,28 @@ public class MongoSampler extends AbstractJavaSamplerClient implements Serializa
 
                     List<Document> docs=subscriber.getReceived();
 
-                    if(docs.isEmpty())
-                        throw new IndexOutOfBoundsException("no value was returned to read request");
-
-                    if(docs.size()!=batchSize)
-                        throw new Exception("The number of values returned is not equal to the batchSize, it is "+docs.size()+" expected "+batchSize);
-
+                    if(docs.isEmpty()) {
+                        successful = false;
+                        message = "no value was returned to read request";
+                    }
+                    else
+                    if(docs.size()!=batchSize) {
+                        successful=false;
+                        message="The number of values returned is not equal to the batchSize, it is " + docs.size() + " expected " + batchSize;
+                    }
+                    else
                     if(!value.equals("")) {
                         String retrievedVal = docs.get(0).getString("value");
 
-                        if (!value.equals(retrievedVal))
-                            throw new Exception("Value verification failed. Expected:"+value+" got instead:"+retrievedVal);
+                        if (!value.equals(retrievedVal)) {
+                            successful=false;
+                            message = "Value verification failed. Expected:" + value + " got instead:" + retrievedVal;
+                        }
                     }
                 }
             }
-            successful = true;
-            message = "OK on object "+key;
+
+
 
         } catch (Throwable e) {
 

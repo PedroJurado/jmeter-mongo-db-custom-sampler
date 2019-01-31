@@ -128,7 +128,8 @@ public class TestSampler{
         JavaSamplerContext context3 = new JavaSamplerContext(arguments3);
         sampler3.setupTest(context3);
 
-        //read value
+
+        //read value - this is expected to throw an error but not bubble up
         SampleResult result3 = sampler.runTest(context3);
         assertFalse (result3.isResponseCodeOK());
 
@@ -190,7 +191,7 @@ public class TestSampler{
         arguments3.addArgument("connectionString","mongodb://localhost:12345");
         arguments3.addArgument("database","mydb");
         arguments3.addArgument("collection","test");
-        arguments2.addArgument("batchSize","100");
+        arguments3.addArgument("batchSize","100");
 
         JavaSamplerContext context3 = new JavaSamplerContext(arguments3);
         sampler3.setupTest(context3);
