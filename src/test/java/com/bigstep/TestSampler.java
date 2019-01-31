@@ -57,6 +57,7 @@ public class TestSampler{
         arguments.addArgument("connectionString","mongodb://localhost:12345");
         arguments.addArgument("database","mydb");
         arguments.addArgument("collection","test");
+        arguments.addArgument("batchSize","1");
 
         JavaSamplerContext context = new JavaSamplerContext(arguments);
         sampler.setupTest(context);
@@ -82,6 +83,7 @@ public class TestSampler{
         arguments.addArgument("connectionString","mongodb://localhost:12345");
         arguments.addArgument("database","mydb");
         arguments.addArgument("collection","test");
+        arguments.addArgument("batchSize","1");
 
         JavaSamplerContext context = new JavaSamplerContext(arguments);
         sampler.setupTest(context);
@@ -101,6 +103,7 @@ public class TestSampler{
         arguments2.addArgument("connectionString","mongodb://localhost:12345");
         arguments2.addArgument("database","mydb");
         arguments2.addArgument("collection","test");
+        arguments2.addArgument("batchSize","1");
 
         JavaSamplerContext context2 = new JavaSamplerContext(arguments2);
         sampler2.setupTest(context2);
@@ -120,6 +123,7 @@ public class TestSampler{
         arguments3.addArgument("connectionString","mongodb://localhost:12345");
         arguments3.addArgument("database","mydb");
         arguments3.addArgument("collection","test");
+        arguments3.addArgument("batchSize","1");
 
         JavaSamplerContext context3 = new JavaSamplerContext(arguments3);
         sampler3.setupTest(context3);
@@ -141,7 +145,7 @@ public class TestSampler{
 
         Arguments arguments = new Arguments();
         arguments.addArgument("testType","writeMany");
-        arguments.addArgument("key","k1");
+        arguments.addArgument("key","xk1");
         arguments.addArgument("value","v1"); //write v1
         arguments.addArgument("connectionString","mongodb://localhost:12345");
         arguments.addArgument("database","mydb");
@@ -161,7 +165,7 @@ public class TestSampler{
 
         Arguments arguments2 = new Arguments();
         arguments2.addArgument("testType","readMany");
-        arguments2.addArgument("key","k1");
+        arguments2.addArgument("key","xk1");
         arguments2.addArgument("value","v1"); //check that it is indeed v1
         arguments2.addArgument("connectionString","mongodb://localhost:12345");
         arguments2.addArgument("database","mydb");
@@ -181,7 +185,7 @@ public class TestSampler{
 
         Arguments arguments3 = new Arguments();
         arguments3.addArgument("testType","readMany");
-        arguments3.addArgument("key","k1");
+        arguments3.addArgument("key","xk1");
         arguments3.addArgument("value","v2-asdasd"); //check that it detects an issue
         arguments3.addArgument("connectionString","mongodb://localhost:12345");
         arguments3.addArgument("database","mydb");
