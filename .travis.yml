@@ -4,6 +4,6 @@ deploy:
   api_key:
     secure: ZlFmUKOwp/kcn8qNgP+F3XnDJMicUjaHFx77H2zhM7UEfqIPmpaigOPOfXPcx/zsM+S3pAjZ0LCOY7XjPa0EHIIg6BxuiAeXY5U8LLVDXPUdobABDh6IhWkamdL4XUh8vU4xgrjl4oF7NP9A22R0ql8iDkACE9PRVP9o3Xs14f42sJvvtPKWBn4d9/CRxpKByME6/xUmoNGbxUmS7lsRKLyuqnuFwvNv35aFOlQMxWhNIpf9G0Ad0hSzYEwqyJCL3O8k2znn0/U8f+JskqlQ3IUNPu71+WevkizQAJyAZjWWk8bVFKw+bSuDBqemA+otJTOVdf2MzinGh1FAElY/Jdjr3CH5mP+VKHJUHglqhH69nhUURwDvMVcCsC6Zyh9t0UcAXYTpl+KDv+cX6+u2O/QH7tP8GLydaaBDqxn0uR3d2BlJdBfLFFGQMKESKFFFSV5PJEWSpbUJRX+swaGHBelR1zrsJWyrN5tJ9tvYbncVvELCsyB05vc7iO1qpl3ZV6a+aUvDvOt/vVa8n2rkmd77yoRchugXYIE7EPmGZsqGPV20vCdc+cOS1w7TgnsJLCyG+llrnh2SGkpEG96HGS6cXDOgRk5AkM/Oqe8NM4dnhlKj7vrTjhOpzN4kMaib8GojcpaMQc94eXpasSaGd7dSKzpo/aocRCfwOBUIDlE=
   file_glob: true
-  file: target/MongoSampler*.jar
+  file: *
   on:
     repo: bigstepinc/jmeter-mongo-db-custom-sampler
