@@ -1,6 +1,8 @@
 # jmeter-mongo-db-custom-sampler
 Reactive streams based jmeter mongo db custom sampler
 
+[![Build Status](https://travis-ci.org/bigstepinc/jmeter-mongo-db-custom-sampler.svg?branch=master)](https://travis-ci.org/bigstepinc/jmeter-mongo-db-custom-sampler)
+
 ### Compile
 To compile run. 
 ```
