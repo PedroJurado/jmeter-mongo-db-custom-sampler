@@ -204,7 +204,7 @@ public class MongoSampler extends AbstractJavaSamplerClient implements Serializa
 
                     ObservableSubscriber<Document> subscriber = new ObservableSubscriber<Document>();
 
-                    collection.find(regex("_id", "/^"+key+"\\-.*$/")).subscribe(subscriber);
+                    collection.find(regex("_id", key+".*")).subscribe(subscriber);
 
                     subscriber.await(timeout, TimeUnit.MILLISECONDS);
 
