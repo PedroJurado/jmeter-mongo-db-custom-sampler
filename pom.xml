@@ -9,7 +9,7 @@
     </properties>
     <groupId>com.bigstep</groupId>
     <artifactId>MongoSampler</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.apache.jmeter/ApacheJMeter_java -->
