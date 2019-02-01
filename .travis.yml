@@ -9,3 +9,4 @@ deploy:
   on:
     repo: bigstepinc/jmeter-mongo-db-custom-sampler
     tags: true
+  skip_cleanup: true
