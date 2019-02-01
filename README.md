@@ -5,26 +5,17 @@ This version uses ReactiveStreams 1.10 and the 3.9 Java MongoDB Driver.
 
 [![Build Status](https://travis-ci.org/bigstepinc/jmeter-mongo-db-custom-sampler.svg?branch=master)](https://travis-ci.org/bigstepinc/jmeter-mongo-db-custom-sampler)
 
-### Compile
-To compile run. 
-```
-mvn package
-```
-Note: This will also run several unit tests which use an embeded mongo server to test the sampling functions. I admit this might be a bit of an overkill but old habits die hard.
-Since it will atempt to download the mongo database for the embedded test and it might take some time, to skip it use:
-```
-mvn package -Dmaven.test.skip=true
-```
-
 ### Installation
-This was tested with jmeter 5.0. To use copy the resulting jar (from the target directory) to 
-jmeter's lib/ext directories. 
+This was tested with jmeter 5.0. To use copy [the latest MongoSampler-*.jar](https://github.com/bigstepinc/jmeter-mongo-db-custom-sampler/releases/latest) to jmeter's lib/ext directories.
 
 Also copy (should work with other versions as well):
+
 * mongo-java-driver-3.9.1.jar
 * mongodb-driver-async-3.9.1.jar
 * mongodb-driver-reactivestreams-1.10.0.jar
 * reactive-streams-1.0.2.jar
+
+Use the maven repo to retrieve them.
 
 ### Usage
  
@@ -55,4 +46,15 @@ The typical scenario is to use a CSV dataset to load keys into a variable and us
 To generate a 1m key-value pairs with pairs of 100 chars and a random UUID key. For very big numbers this might take a while.
 ``` 
 python sbin/genkeysandvals.py 1000000 100 > input.csv
+```
+
+### Building from source
+To compile run: 
+```
+mvn package
+```
+Note: This will also run several unit tests which use an embeded mongo server to test the sampling functions. I admit this might be a bit of an overkill but old habits die hard.
+Since it will atempt to download the mongo database for the embedded test and it might take some time, to skip it use:
+```
+mvn package -DskipTests
 ```
