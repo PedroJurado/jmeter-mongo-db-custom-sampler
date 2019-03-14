@@ -1,0 +1,59 @@
+
+Install mongo DB cluster:
+
+- set up private ips and /etc/hosts
+
+10.0.0.20      cfgqrsrv1
+10.0.0.30      mongod1
+10.0.0.31      mongod2
+
+- add repo: 
+
+vi /etc/yum.repos.d/mongodb-org-4.0.repo
+
+[mongodb-org-4.0]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/7/mongodb-org/4.0/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc
+
+- yum -y install mongodb-org
+
+
+- create folder: mkdir /data/mongod
+
+
+edit conf file on conf server: vim /etc/mongod.conf
+add:  data file path
+his own IP
+replication:
+   replSetName: "mongo_rs"
+sharding:
+   clusterRole: configsvr
+
+
+chown -R mongod /data..
+
+
+- start the server:
+
+mongod --config /etc/mongod.conf 
+
+netstat -plntu
+
+
+
+====================
+
+
+
+rs.initiate()
+
+rs.add("mongod1")
+
+rs.add("mongod2")
+
+rs.status()
+
+rs.isMaster()
